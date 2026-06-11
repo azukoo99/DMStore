@@ -5,12 +5,25 @@ window.Alpine = Alpine;
 Alpine.start();
 
 // Theme toggle logic (run early to prevent flashing)
+const getThemeFromCookie = () => {
+    const cookies = document.cookie.split('; ');
+    const themeCookie = cookies.find(row => row.startsWith('color-theme='));
+    return themeCookie ? themeCookie.split('=')[1] : null;
+};
+
+const setThemeCookie = (value) => {
+    const date = new Date();
+    date.setTime(date.getTime() + (365 * 24 * 60 * 60 * 1000));
+    document.cookie = `color-theme=${value}; expires=${date.toUTCString()}; path=/; SameSite=Lax`;
+};
+
 const initTheme = () => {
     const darkIcon = document.getElementById('theme-toggle-dark-icon');
     const lightIcon = document.getElementById('theme-toggle-light-icon');
 
-    const isDark = localStorage.getItem('color-theme') === 'dark' || 
-                   (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const theme = getThemeFromCookie();
+    const isDark = theme === 'dark' || 
+                   (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
     if (isDark) {
         document.documentElement.classList.add('dark');
@@ -35,12 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
         themeToggleBtn.addEventListener('click', function() {
             if (document.documentElement.classList.contains('dark')) {
                 document.documentElement.classList.remove('dark');
-                localStorage.setItem('color-theme', 'light');
+                setThemeCookie('light');
                 if (darkIcon) darkIcon.classList.remove('hidden');
                 if (lightIcon) lightIcon.classList.add('hidden');
             } else {
                 document.documentElement.classList.add('dark');
-                localStorage.setItem('color-theme', 'dark');
+                setThemeCookie('dark');
                 if (lightIcon) lightIcon.classList.remove('hidden');
                 if (darkIcon) darkIcon.classList.add('hidden');
             }

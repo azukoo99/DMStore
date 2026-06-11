@@ -10,7 +10,8 @@
 
         <!-- Pengecekan tema secara inline untuk mencegah kedipan layar -->
         <script>
-            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            const theme = document.cookie.split('; ').find(row => row.startsWith('color-theme='))?.split('=')[1];
+            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark');
