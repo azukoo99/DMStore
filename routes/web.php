@@ -37,11 +37,4 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
-
-Route::get('/seed-db', function () {
-    Artisan::call('db:seed', ['--force' => true]);
-
-    return 'Seeder selesai';
-});
-
 require __DIR__.'/auth.php';
